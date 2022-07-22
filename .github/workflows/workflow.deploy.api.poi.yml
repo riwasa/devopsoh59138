@@ -106,7 +106,7 @@ jobs:
       #     push: true
 
   production:
-    name: "Production"
+    name: "production"
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -129,3 +129,4 @@ jobs:
         with:
           app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
           images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
+          slot-name: staging
