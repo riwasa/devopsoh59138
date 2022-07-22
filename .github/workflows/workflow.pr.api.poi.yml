@@ -16,7 +16,7 @@ env:
 # Set defaults for GitHub Actions runner.
 defaults:
   run:
-    working-directory: ${{ env.WORKDIR }}
+    working-directory: "apis/poi"
 
 jobs:
   buildtest:
