@@ -55,6 +55,11 @@ jobs:
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: "Check for ACR"
+        uses: Azure/cli@1.0.4
+        with:
+          inlineScript: az acr show -n acr_name ${{ steps.resources_prefix.outputs.result }}cr
 
       - name: "Build Docker image using Azure Container Registry"
         uses: Azure/cli@1.0.4
