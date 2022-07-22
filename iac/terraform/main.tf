@@ -1,5 +1,5 @@
 ############################################
-## RESOURCE GROUP - 2                     ##
+## RESOURCE GROUP - 3                     ##
 ############################################
 
 resource "azurerm_resource_group" "resource_group" {
