@@ -1,0 +1,42 @@
+name: "PR - IaC (Terraform)"
+
+# Run on Pull Requests to the Main branch only for the IaC Terraform directory, or when manually triggered.
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "iac/terraform/**"
+  workflow_dispatch:
+
+# Set defaults for the GitHub Actions runner.
+defaults:
+  run:
+    working-directory: "iac/terraform"
+    
+jobs:
+  codequalitycheck:
+    name: "Code Quality Check"
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the contents of the repository to the runner.
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      # Install the latest version of the Terraform CLI.
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        
+      # Checks that all Terraform configuration files adhere to a canoncial format.
+      - name: Terraform Lint
+        uses: terraform fmt -check -recursive
+        
+      # Initialize a new or existing Terraform working directory by creating initial files,
+      # loading any remote state, downloading modules, etc.
+      # For validation remote state is not required; i.e. -backend=false.
+      - name: Terraform Init
+        uses: terraform init -backend-false
+        
+      # Validate Terraform configuration.
+      - name: Terraform Validate
+        uses: terraform validate
