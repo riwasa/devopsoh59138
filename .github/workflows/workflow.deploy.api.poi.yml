@@ -56,10 +56,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-      - name: "Check for ACR"
-        uses: Azure/cli@1.0.4
-        with:
-          inlineScript: az acr show -n ${{ steps.resources_prefix.outputs.result }}cr --resource-group devopsoh59138rg
+      #- name: "Check for ACR"
+      #  uses: Azure/cli@1.0.4
+      #  with:
+      #    inlineScript: az acr show -n ${{ steps.resources_prefix.outputs.result }}cr --resource-group devopsoh59138rg
 
       - name: "Build Docker image using Azure Container Registry"
         uses: Azure/cli@1.0.4
@@ -106,11 +106,11 @@ jobs:
       #     push: true
 
   production:
-    name: "production"
+    name: "Production"
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: poi-production
+      name: production
       url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
     env:
       RESOURCES_PREFIX: ${{ needs.build.outputs.RESOURCES_PREFIX }}
