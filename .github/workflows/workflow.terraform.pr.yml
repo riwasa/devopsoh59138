@@ -29,14 +29,14 @@ jobs:
         
       # Checks that all Terraform configuration files adhere to a canoncial format.
       - name: Terraform Lint
-        uses: terraform fmt -check -recursive
+        run: terraform fmt -check -recursive
         
       # Initialize a new or existing Terraform working directory by creating initial files,
       # loading any remote state, downloading modules, etc.
       # For validation remote state is not required; i.e. -backend=false.
       - name: Terraform Init
-        uses: terraform init -backend-false
+        run: terraform init -backend-false
         
       # Validate Terraform configuration.
       - name: Terraform Validate
-        uses: terraform validate
+        run: terraform validate
