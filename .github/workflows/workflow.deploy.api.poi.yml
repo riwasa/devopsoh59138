@@ -105,12 +105,12 @@ jobs:
       #     build-args: build_version=${{ github.run_id }}
       #     push: true
 
-  production:
-    name: "Production"
+  staging:
+    name: "Staging"
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: production
+      name: poi-staging
       url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
     env:
       RESOURCES_PREFIX: ${{ needs.build.outputs.RESOURCES_PREFIX }}
@@ -130,3 +130,36 @@ jobs:
           app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
           images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
           slot-name: staging
+          
+      - name: Check the health of the deployed service.
+        uses: jtalk/url-health-check-action@v2
+        with:
+          url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/healthcheck/${{ env.API_NAME }}
+          follow-redirect: true
+          max-attempts: 60
+          retry-delay: 10s
+          retry-all: true
+          
+  production:
+    name: "Production"
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: poi-production
+      url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
+    env:
+      RESOURCES_PREFIX: ${{ needs.build.outputs.RESOURCES_PREFIX }}
+      DOCKER_IMAGE_FULL_NAME: "${{ needs.build.outputs.DOCKER_IMAGE_FULL_NAME }}"
+    steps:
+      - name: "Azure Login"
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Azure WebApp
+        id: deploy-to-webapp
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
+          images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
+ 
