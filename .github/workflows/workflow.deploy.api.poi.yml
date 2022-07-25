@@ -142,7 +142,9 @@ jobs:
           
   production:
     name: "Production"
-    needs: build
+    needs: 
+      - staging
+      - build
     runs-on: ubuntu-latest
     environment: 
       name: poi-production
@@ -156,10 +158,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-      - name: Azure WebApp
-        id: deploy-to-webapp
-        uses: Azure/webapps-deploy@v2
+      - name: "Swap WebApp Slots"
+        uses: Azure/cli@v1
         with:
-          app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
-          images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
+          inlineScript: az webapp deployment slot swap --resource-group ${{ env.RESOURCES_PREFIX }}rg --name ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }} --slot staging --target-slot production
  
